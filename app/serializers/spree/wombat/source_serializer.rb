@@ -6,11 +6,11 @@ module Spree
       attributes :cc_type, :last_digits
       
       def cc_type
-        object.cc_type
+        object.try(:cc_type)
       end
 
       def last_digits
-        object.last_digits
+        object.try(:last_digits)
       end
     end
   end
