@@ -18,11 +18,11 @@ module Spree
       end
 
       def firstname
-        object.billing_address.first_name if object.billing_address.first_name.present?
+        object.billing_address.firstname if object.billing_address.firstname.present?
       end
 
       def lastname
-        object.billing_address.last_name if object.billing_address.last_name.present?
+        object.billing_address.lastname if object.billing_address.lastname.present?
       end
       
     end
