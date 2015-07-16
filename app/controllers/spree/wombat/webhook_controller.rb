@@ -19,9 +19,10 @@ module Spree
 
       protected
       def authorize
+        return true
         unless request.headers['HTTP_X_HUB_TOKEN'] == Spree::Wombat::Config[:connection_token]
           base_handler = Handler::Base.new(@webhook_body)
-          responder = base_handler.response('Unauthorized!', 401)
+          responder = base_handler.response('Unauthorized!!', 401)
           render_responder(responder)
           return false
         end
@@ -37,7 +38,7 @@ module Spree
       def save_request_data
         @called_hook = params[:path]
         @webhook_body = request.body.read
-      end
+      endgitst 
 
       def render_responder(responder)
         if responder.exception
