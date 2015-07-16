@@ -7,10 +7,11 @@ module Spree
       # responder as an argument.
       class_attribute :error_notifier
 
-      before_filter :save_request_data, :authorize
+      #before_filter :save_request_data, :authorize
       rescue_from Exception, :with => :exception_handler
 
       def consume
+        Rails.logger.debug Spree::Wombat::Config[:connection_token]
         handler = Handler::Base.build_handler(@called_hook, @webhook_body)
         responder = handler.process
         render_responder(responder)
