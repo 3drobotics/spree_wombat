@@ -5,6 +5,7 @@ module Spree
       rescue_from Exception, :with => :exception_handler
 
       def consume
+        Rails.logger.debug Spree::Wombat::Config[:connection_token]
         handler = Handler::Base.build_handler(@called_hook, @webhook_body)
         responder = handler.process
         render json: ResponderSerializer.new(responder, root: false), status: responder.code
@@ -12,6 +13,7 @@ module Spree
 
       protected
       def authorize
+        Rails.logger.debug Spree::Wombat::Config[:connection_token]
         unless request.headers['HTTP_X_HUB_TOKEN'] == Spree::Wombat::Config[:connection_token]
           base_handler = Handler::Base.new(@webhook_body)
           responder = base_handler.response('Unauthorized!', 401)
