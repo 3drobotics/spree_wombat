@@ -1,7 +1,7 @@
 module Spree
   module Wombat
     class WebhookController < ActionController::Base
-      before_filter :save_request_data#, :authorize
+      before_filter :save_request_data #, :authorize
       rescue_from Exception, :with => :exception_handler
 
       def consume
