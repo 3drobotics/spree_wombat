@@ -4,7 +4,7 @@ module Spree
       class SetInventoryHandler < Base
 
         def process
-          sku = @payload[:inventory][:sku]
+          sku = @payload[:id]
           variant = Spree::Variant.find_by_sku(sku)
           return response("Product with SKU #{sku} was not found", 404) unless variant
 
