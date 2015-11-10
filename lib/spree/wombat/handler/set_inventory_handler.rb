@@ -18,10 +18,10 @@ module Spree
             stock_item = stock_location.stock_items.where(variant: variant).first
             return response("Stock location '#{stock_location_name}' does not has any stock_items for #{sku}", 500) unless stock_item
 
-            count_on_hand = stock_item.count_on_hand
+            #count_on_hand = stock_item.count_on_hand
             stock_item.set_count_on_hand(inventory_at_location)
 
-            return response("Set inventory for #{sku} at #{stock_location_name} from #{count_on_hand} to #{stock_item.reload.count_on_hand}")
+            return response("Set inventory for #{sku} at #{stock_location_name} to #{stock_item.reload.count_on_hand}")
 
           end
 
