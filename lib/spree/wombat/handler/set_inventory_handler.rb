@@ -9,7 +9,7 @@ module Spree
           return response("Product with SKU #{sku} was not found", 404) unless variant
 
           @payload[:inventory][:quantities].each do |inventory_payload|
-            stock_location_name   = inventory_payload.first
+            stock_location_name   = nice_name_mapper(inventory_payload.first)
             inventory_at_location = inventory_payload.last
 
             stock_location = Spree::StockLocation.find_by_name(stock_location_name) || Spree::StockLocation.find_by_admin_name(stock_location_name)
@@ -25,6 +25,12 @@ module Spree
 
           end
 
+        end
+
+        def nice_name_mapper(netsuite_name)
+           "3DR Global Warehouses : 3PL1 Warehouse (Ceva Hayward)": "3DR Global Warehouses - Hayward",
+           "3DR Global Warehouses : 3PL2 Warehouse (PCH HK)": "3DR Global Warehouses - HK",
+           "3DR Global Warehouses : 3DR San Diego Warehouse": "3DR Global Warehouses - San Diego"
         end
 
       end
