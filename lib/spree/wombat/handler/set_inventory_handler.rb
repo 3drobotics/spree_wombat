@@ -27,10 +27,11 @@ module Spree
 
         end
 
-        def nice_name_mapper(netsuite_name)
-           "3DR Global Warehouses : 3PL1 Warehouse (Ceva Hayward)": "3DR Global Warehouses - Hayward",
-           "3DR Global Warehouses : 3PL2 Warehouse (PCH HK)": "3DR Global Warehouses - HK",
-           "3DR Global Warehouses : 3DR San Diego Warehouse": "3DR Global Warehouses - San Diego"
+        def nice_name_mapper(netsuite_stock_location)
+          {"3DR Global Warehouses : 3PL1 Warehouse (Ceva Hayward)" => "3DR Global Warehouses - Hayward",
+           "3DR Global Warehouses : 3PL2 Warehouse (PCH HK)" =>  "3DR Global Warehouses - HK",
+           "3DR Global Warehouses : 3DR San Diego Warehouse" =>  "3DR Global Warehouses - San Diego"
+          }[netsuite_stock_location]
         end
 
       end
