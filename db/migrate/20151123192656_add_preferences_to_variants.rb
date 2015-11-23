@@ -1,5 +1,5 @@
 class AddPreferencesToVariants < ActiveRecord::Migration
   def change
-    add_column :variants, :preferences, :text
+    add_column :spree_variants, :preferences, :text
   end
 end
