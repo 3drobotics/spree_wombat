@@ -15,7 +15,7 @@ module Spree
 
             inventory_at_location = inventory_payload.last
 
-            return response("Stock location with name #{stock_location_name} was not found", 404) unless stock_location
+            return response("Stock location with name #{stock_location_name} was not found", 200) unless stock_location
 
             stock_item = stock_location.stock_items.where(variant: variant).first
             return response("Stock location '#{stock_location_name}' does not has any stock_items for #{sku}", 500) unless stock_item
