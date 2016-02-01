@@ -7,6 +7,7 @@ module Spree
           sku = @payload[:inventory][:id]
           variant = Spree::Variant.find_by_sku(sku)
           return response("Product with SKU #{sku} was not found", 404) unless variant
+          return response("Product #{sku} is not a Solo product", 200) unless variant.product.solo?
 
           @payload[:inventory][:quantities].each do |inventory_payload|
             stock_location_name = inventory_payload.first
