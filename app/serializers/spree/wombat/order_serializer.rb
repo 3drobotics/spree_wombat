@@ -22,7 +22,7 @@ module Spree
 
       #sales order transaction date as defined by netsuite
       def tranDate
-        order.created_at.strftime("%m/%d/%Y")
+        object.created_at.strftime("%m/%d/%Y")
       end
 
       #Does this order contain one or more PayPal payments
