@@ -202,6 +202,16 @@ module Spree
           @payment_methods
         end
 
+        def only_payment_is_paypal?
+          if object.payments.length == 1
+            payment = object.payments.first
+
+            if payment.payment_method.type == "Spree::PaymentMethod::Check"
+              true
+            end
+          end
+        end
+
     end
   end
 end
