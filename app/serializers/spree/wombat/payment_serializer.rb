@@ -3,7 +3,7 @@ require 'active_model/serializer'
 module Spree
   module Wombat
     class PaymentSerializer < ActiveModel::Serializer
-      attributes :id, :number, :status, :amount, :payment_method, :payment_gateway, :authorization_code, :transaction_id
+      attributes :status, :amount, :payment_method, :payment_gateway, :authorization_code, :transaction_id
 
       has_one :source, serializer: Spree::Wombat::SourceSerializer
 

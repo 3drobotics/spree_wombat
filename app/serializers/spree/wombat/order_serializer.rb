@@ -6,7 +6,7 @@ module Spree
 
       attributes :id, :status, :channel, :email, :currency, :totals,
         :adjustments, :tranDate, :customFormRef, :termsRef, :salesEffectiveDate,
-        :completed_at, :customer_type, :stock_location
+        :customer_type, :stock_location
 
       has_many :line_items,  serializer: Spree::Wombat::LineItemSerializer
       has_many :payments, serializer: Spree::Wombat::PaymentSerializer
