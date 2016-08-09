@@ -20,7 +20,7 @@ module Spree
       end
 
       def authorization_code
-        object.payment_method.type == "Spree::Gateway::PayPalExpress" ? object.source.transaction_id : auth_codes << object.response_code
+        object.payment_method.type == "Spree::Gateway::PayPalExpress" ? object.source.transaction_id : object.response_code
       end
 
       def transaction_id
