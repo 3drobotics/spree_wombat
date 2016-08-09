@@ -4,10 +4,9 @@ module Spree
   module Wombat
     class OrderSerializer < ActiveModel::Serializer
 
-      attributes :id, :status, :channel, :email, :currency, :placed_on, :updated_at, :totals,
-        :adjustments, :guest_token, :shipping_instructions, :tranDate, :customFormRef, :termsRef,
-        :salesEffectiveDate, :authorization_code, :completed_at, :promotion_applied, :distro, :payment_gateway,
-        :payment_method
+      attributes :id, :status, :channel, :email, :currency, :totals,
+        :adjustments, :tranDate, :customFormRef, :termsRef, :salesEffectiveDate,
+        :completed_at, :customer_type, :stock_location
 
       has_many :line_items,  serializer: Spree::Wombat::LineItemSerializer
       has_many :payments, serializer: Spree::Wombat::PaymentSerializer
@@ -45,59 +44,17 @@ module Spree
         end
       end
 
-      #To allow netsuite capture payment
-      #Required by gateway
-      def authorization_code
-        auth_codes = []
-
-        object.payments.each do |payment|
-          if payment.payment_method.type == "Spree::Gateway::PayPalExpress"
-            auth_codes << payment.source.transaction_id
-          else
-            auth_codes << payment.response_code
-          end
-        end
-
-        auth_codes.join(" ")
-      end
-
       def completed_at
         object.completed_at
       end
 
-      def promotion_applied
-        object.applied_coupon_code
+      def customer_type
+        return nil if object.user_type_id.nil?
+        Spree::UserType.find_by_id(object.user_type_id).try(:name)
       end
 
-      #Is user a distributor
-      def distro
-        return '' if object.user.blank? ||
-                     object.user.user_group.blank? ||
-                     object.user.user_group.name.match(/^Distributor.*/).blank?
-        '1'
-      end
-
-      def payment_gateway
-        payment_method = object.payments.select { |p| p.payment_method.try(:type).present? }.first.try(:payment_method)
-        return "" if payment_method.blank?
-
-        if payment_method.type == "Spree::Gateway::CyberSource"
-          if payment_method.preferences[:login] == "3drobotics1"
-            return payment_method.type
-          else
-            return "#{payment_method.type}2"
-          end
-        else
-          return payment_method.type
-        end
-      end
-
-      def payment_method
-        if payment_methods.count > 0
-          payment_methods.join(" | ")
-        else
-          "Other"
-        end
+      def stock_location
+        object.try(:shipments).try(:first).try(:stock_location).try(:name) || "Unknown (is order complete?)" #orders will contain line items that belong to only one stock location after 3PL / Hayward goes live
       end
 
       def shipping_instructions
@@ -165,43 +122,6 @@ module Spree
           tax
         end
 
-        def paypal_payments
-          payments.find_all { |p| p.payment_method.type == "Spree::Gateway::PayPalExpress" }
-        end
-
-        def payment_methods
-          if @payment_methods.nil?
-            @payment_methods = []
-
-            valid_payments = payments.find_all { |p| p.payment_method.respond_to?(:name) }
-            valid_payments = valid_payments.reject { |p| ['failed', 'void', 'invalid', 'NULL'].include?(p.state) }
-
-            valid_payments = [] if only_payment_is_paypal?
-
-            valid_payments.each do |payment|
-              if ["PayPal", "Paypal (manual)"].include?(payment.payment_method.name)
-                @payment_methods << "PayPal"
-              elsif ["Credit Card", "Credit Card - Old"].include?(payment.payment_method.name) && payment.respond_to?(:source)
-                if payment.source.respond_to?(:cc_type)
-                  @payment_methods << payment.source.cc_type
-                else
-                  @payment_methods << payment.source.source.cc_type
-                end
-              elsif payment.payment_method.name == "Wire transfer"
-                @payment_methods << "Wire transfer"
-              elsif payment.payment_method.type == "Spree::PaymentMethod::Check"
-                @payment_methods << "Check"
-              elsif payment.payment_method.name.present?
-                @payment_methods << payment.payment_method.name
-              end
-            end
-
-            @payment_methods.uniq!
-          end
-
-          @payment_methods
-        end
-
         def only_payment_is_paypal?
           if object.payments.length == 1
             payment = object.payments.first
@@ -210,6 +130,10 @@ module Spree
               true
             end
           end
+        end
+
+        def paypal_payments
+          object.payments.find_all { |p| p.payment_method.type == "Spree::Gateway::PayPalExpress" }
         end
 
     end
